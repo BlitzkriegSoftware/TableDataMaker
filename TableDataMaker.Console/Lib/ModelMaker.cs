@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TableDataMaker.ConsoleApp.Lib
 {
@@ -12,24 +8,26 @@ namespace TableDataMaker.ConsoleApp.Lib
 
         public static Models.PersonEntity PersonMake()
         {
-            var id = Guid.NewGuid();
-            var person = new Models.PersonEntity(id)
-            {
-                
-                Birthday = Faker.Date.Birthday(),
-                EMail = Faker.User.Email(),
-                NameLast = Faker.Name.LastName()
-            };
+            var gender  = Faker.Name.Gender();
+            var nameLast = Faker.Name.LastName();
+            var nameFirst = string.Empty;
 
-            person.Gender = Faker.Name.Gender();
-            if (person.Gender.ToLowerInvariant().StartsWith("f"))
+            if (gender.ToLowerInvariant().StartsWith("f"))
             {
-                person.NameFirst = Faker.Name.FemaleFirstName();
+                nameFirst = Faker.Name.FemaleFirstName();
             }
             else
             {
-                person.NameFirst = Faker.Name.MaleFirstName();
+                nameFirst = Faker.Name.MaleFirstName();
             }
+
+            var person = new Models.PersonEntity(nameLast, nameFirst);
+
+            person.Gender = gender;
+
+            person.Birthday = Faker.Date.Birthday();
+            person.EMail = Faker.User.Email();
+            person.NameLast = Faker.Name.LastName();
 
             person.Company = person.EMail.Substring(person.EMail.IndexOf('@') + 1);
 

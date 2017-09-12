@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace TableDataMaker.ConsoleApp.Lib
 {
@@ -14,10 +10,10 @@ namespace TableDataMaker.ConsoleApp.Lib
         /// <returns>formatted string</returns>
         public static string GetVersion()
         {
-            int mjr = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMajorPart;
-            int mnr = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMinorPart;
-            int bld = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileBuildPart;
-            int prv = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FilePrivatePart;
+            int mjr = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMajorPart;
+            int mnr = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileMinorPart;
+            int bld = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileBuildPart;
+            int prv = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FilePrivatePart;
             return mjr + "." + mnr + "." + bld + "." + prv;
         }
 
@@ -27,7 +23,7 @@ namespace TableDataMaker.ConsoleApp.Lib
         /// <returns>title</returns>
         public static string GetTitle()
         {
-            return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).ProductName;
+            return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).ProductName;
         }
 
         /// <summary>
@@ -36,7 +32,7 @@ namespace TableDataMaker.ConsoleApp.Lib
         /// <returns>String of name</returns>
         public static string GetExeName()
         {
-            return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileName;
+            return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileName;
         }
 
         /// <summary>
@@ -45,7 +41,7 @@ namespace TableDataMaker.ConsoleApp.Lib
         /// <returns></returns>
         public static string GetCopyright()
         {
-            return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LegalCopyright;
+            return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LegalCopyright;
         }
     }
 

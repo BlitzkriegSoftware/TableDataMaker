@@ -29,23 +29,25 @@ namespace TableDataMaker.ConsoleApp
                     exitCode = 2;
                 }
 
-                if(options.NumberOfRecords <= 0)
+                if (options.NumberOfRecords <= 0)
                 {
                     Usage("/n The number of records must be > 0", options);
                     exitCode = 3;
                 }
 
-                if(exitCode <= 0)
+                if (exitCode <= 0)
                 {
+                    var tableName = "People";
                     CloudStorageAccount storageAccount = CloudStorageAccount.Parse(options.ConnectionString);
                     CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-                    CloudTable table = tableClient.GetTableReference("People");
-                    // table.CreateIfNotExists();
+                    tableClient.DefaultRequestOptions.PayloadFormat = TablePayloadFormat.JsonNoMetadata;
+                    CloudTable table = tableClient.GetTableReference(tableName);
+                    table.CreateIfNotExists();
 
-                    for (int i=0; i< options.NumberOfRecords; i++)
+                    for (int i = 0; i < options.NumberOfRecords; i++)
                     {
                         PersonEntity item = Lib.ModelMaker.PersonMake();
-                        Console.WriteLine("{0} -> {1}", i, item.ToString());
+                        Console.WriteLine("{0} -> {1}", i, PersonDebug(item));
                         TableOperation insertOperation = TableOperation.Insert(item);
                         table.Execute(insertOperation);
                     }
@@ -54,6 +56,28 @@ namespace TableDataMaker.ConsoleApp
 
             Environment.ExitCode = exitCode;
             return exitCode;
+        }
+
+        static string PersonDebug(Models.PersonEntity model)
+        {
+            /// <summary>
+            /// Debugging string
+            /// </summary>
+            /// <returns></returns>
+
+            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+                    model.NameLast,
+                    model.NameFirst,
+                    model.Gender,
+                    model.Birthday,
+                    model.Company,
+                    model.EMail,
+                    model.Address1,
+                    model.Address2,
+                    model.City,
+                    model.State,
+                    model.Zip
+                    );
         }
 
         static void Title()

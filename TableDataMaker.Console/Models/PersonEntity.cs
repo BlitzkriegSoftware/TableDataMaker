@@ -1,9 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TableDataMaker.ConsoleApp.Models
 {
@@ -11,26 +9,23 @@ namespace TableDataMaker.ConsoleApp.Models
     {
         public PersonEntity() { }
 
-        public PersonEntity(Guid id)
+        public PersonEntity(string nameLast, string nameFirst)
         {
-            var segs = id.ToString().Split(new char[] { '-' });
-            this.PartitionKey = segs[0];
-            this.RowKey = id.ToString();
-            this.Id = id;
+            this.PartitionKey = nameLast;
+            this.NameLast = PartitionKey;
+            this.RowKey = nameFirst;
+            this.NameFirst = this.RowKey;
         }
-
-        /// <summary>
-        /// Row Key (PK)
-        /// </summary>
-        public Guid Id { get; set; }
 
         /// <summary>
         /// Name Last
         /// </summary>
+        [JsonIgnore]
         public string NameLast { get; set; }
         /// <summary>
         /// Name First
         /// </summary>
+        [JsonIgnore]
         public string NameFirst { get; set; }
         /// <summary>
         /// E-Mail
@@ -43,6 +38,7 @@ namespace TableDataMaker.ConsoleApp.Models
         /// <summary>
         /// Birthday
         /// </summary>
+        [JsonProperty(ItemConverterType = typeof(JavaScriptDateTimeConverter))]
         public DateTime Birthday { get; set; }
         /// <summary>
         /// Gender
@@ -69,26 +65,5 @@ namespace TableDataMaker.ConsoleApp.Models
         /// </summary>
         public string Zip { get; set; }
 
-        /// <summary>
-        /// Debugging string
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}", 
-                    this.Id, 
-                    this.NameLast, 
-                    this.NameFirst,
-                    this.Gender,
-                    this.Birthday, 
-                    this.Company, 
-                    this.EMail, 
-                    this.Address1, 
-                    this.Address2, 
-                    this.City, 
-                    this.State, 
-                    this.Zip, 
-                    this.PartitionKey);
-        }
     }
 }
