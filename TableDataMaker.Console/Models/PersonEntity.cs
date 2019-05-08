@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.Azure.Cosmos.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -64,6 +64,27 @@ namespace TableDataMaker.ConsoleApp.Models
         /// Zip
         /// </summary>
         public string Zip { get; set; }
+
+        /// <summary>
+        /// Debugging String
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+                this.NameLast,
+                this.NameFirst,
+                this.Gender,
+                this.Birthday,
+                this.Company,
+                this.EMail,
+                this.Address1,
+                this.Address2,
+                this.City,
+                this.State,
+                this.Zip
+                );
+        }
 
     }
 }

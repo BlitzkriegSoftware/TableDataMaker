@@ -1,8 +1,9 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+﻿using CommandLine;
 using System;
 
 using TableDataMaker.ConsoleApp.Models;
+
+using Microsoft.Azure.Cosmos.Table;
 
 namespace TableDataMaker.ConsoleApp
 {
@@ -14,70 +15,44 @@ namespace TableDataMaker.ConsoleApp
 
             Title();
 
-            var options = new Options();
-            if (CommandLine.Parser.Default.ParseArguments(args, options))
+            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
             {
-                if (options.DoHelp)
+                if (o.DoHelp)
                 {
-                    Usage(null, options);
+                    Usage(null, o);
                     exitCode = 1;
                 }
 
-                if (string.IsNullOrWhiteSpace(options.ConnectionString))
+                if (string.IsNullOrWhiteSpace(o.ConnectionString))
                 {
-                    Usage("/c Connection string is required", options);
+                    Usage("/c Connection string is required", o);
                     exitCode = 2;
                 }
 
-                if (options.NumberOfRecords <= 0)
+                if (o.NumberOfRecords <= 0)
                 {
-                    Usage("/n The number of records must be > 0", options);
+                    Usage("/n The number of records must be > 0", o);
                     exitCode = 3;
                 }
 
                 if (exitCode <= 0)
                 {
                     var tableName = "People";
-                    CloudStorageAccount storageAccount = CloudStorageAccount.Parse(options.ConnectionString);
-                    CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-                    tableClient.DefaultRequestOptions.PayloadFormat = TablePayloadFormat.JsonNoMetadata;
-                    CloudTable table = tableClient.GetTableReference(tableName);
-                    table.CreateIfNotExists();
 
-                    for (int i = 0; i < options.NumberOfRecords; i++)
+                    // Create or reference an existing table
+                    CloudTable table = Lib.MsStorageUtilities.CreateOrGetTableAsync(tableName, o.ConnectionString).Result;
+
+                    for (int i = 0; i < o.NumberOfRecords; i++)
                     {
                         PersonEntity item = Lib.ModelMaker.PersonMake();
-                        Console.WriteLine("{0} -> {1}", i, PersonDebug(item));
-                        TableOperation insertOperation = TableOperation.Insert(item);
-                        table.Execute(insertOperation);
+                        Console.WriteLine("{0} -> {1}", i, item.ToString());
+                        var res = Lib.MsStorageUtilities.InsertOrMergeEntityAsync<Models.PersonEntity>(table, item).Result;
                     }
                 }
-            }
+            });
 
             Environment.ExitCode = exitCode;
             return exitCode;
-        }
-
-        static string PersonDebug(Models.PersonEntity model)
-        {
-            /// <summary>
-            /// Debugging string
-            /// </summary>
-            /// <returns></returns>
-
-            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
-                    model.NameLast,
-                    model.NameFirst,
-                    model.Gender,
-                    model.Birthday,
-                    model.Company,
-                    model.EMail,
-                    model.Address1,
-                    model.Address2,
-                    model.City,
-                    model.State,
-                    model.Zip
-                    );
         }
 
         static void Title()
@@ -87,7 +62,7 @@ namespace TableDataMaker.ConsoleApp
 
         static void Usage(string message, Options options)
         {
-            Console.WriteLine("{0}", options.GetUsage());
+            Console.WriteLine("{0}", "");
             if (!string.IsNullOrWhiteSpace(message)) Console.WriteLine(message);
         }
     }
